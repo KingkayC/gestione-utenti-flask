@@ -23,23 +23,14 @@ def logout():
 def register():
     data = request.get_json()
 
-    codice_fiscale = data.get('codice_fiscale')
-
-    # Verifica se il codice fiscale è già registrato
-    utente_esistente = Utente.query.filter_by(codice_fiscale=codice_fiscale).first()
-    if utente_esistente:
-        return jsonify({"error": "Codice fiscale già registrato"}), 409
-
-    # Crea un nuovo utente
     nuovo_utente = Utente(
         nome=data.get('nome'),
         cognome=data.get('cognome'),
-        codice_fiscale=codice_fiscale,
+        codice_fiscale=data.get('codice_fiscale'),
         telefono=data.get('telefono'),
         email=data.get('email'),
-        password=data.get('password')  # 🔐 da cifrare in produzione
+        password=data.get('password')  # ⚠️ Da hashare in produzione!
     )
-
     db.session.add(nuovo_utente)
     db.session.commit()
 
