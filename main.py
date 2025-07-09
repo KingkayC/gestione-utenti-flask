@@ -25,3 +25,8 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+    from flask import jsonify
+
+@app.route("/")
+def home():
+    return jsonify({"status": "ok", "message": "API Flask attiva 🚀"})
