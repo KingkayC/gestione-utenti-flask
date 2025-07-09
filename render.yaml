@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gestione-utenti-flask
+    runtime: python
+    buildCommand: ""
+    startCommand: python main.py
+    envVars:
+      - key: FLASK_ENV
+        value: production

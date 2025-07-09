@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema di Registrazione Utenti</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Sistema di Registrazione</h1>
+            <nav class="nav">
+                <button id="loginBtn" class="nav-btn">Accedi</button>
+                <button id="registerBtn" class="nav-btn primary">Registrati</button>
+                <button id="adminBtn" class="nav-btn admin">Admin</button>
+                <button id="logoutBtn" class="nav-btn" style="display: none;">Esci</button>
+            </nav>
+        </header>
+
+        <main class="main">
+            <!-- Pagina di benvenuto -->
+            <div id="welcomePage" class="page active">
+                <div class="welcome-content">
+                    <h2>Benvenuto nel nostro sistema</h2>
+                    <p>Registrati per accedere ai nostri servizi o accedi se hai già un account.</p>
+                    <div class="welcome-actions">
+                        <button class="btn primary large" onclick="showPage('registerPage')">Registrati Ora</button>
+                        <button class="btn secondary large" onclick="showPage('loginPage')">Accedi</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagina di registrazione -->
+            <div id="registerPage" class="page">
+                <div class="form-container">
+                    <h2>Registrazione</h2>
+                    <form id="registerForm" class="form">
+                        <div class="form-group">
+                            <label for="nome">Nome *</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cognome">Cognome *</label>
+                            <input type="text" id="cognome" name="cognome" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="codice_fiscale">Codice Fiscale *</label>
+                            <input type="text" id="codice_fiscale" name="codice_fiscale" maxlength="16" required>
+                            <small>Il codice fiscale sarà il tuo username</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefono">Telefono *</label>
+                            <input type="tel" id="telefono" name="telefono" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" id="password" name="password" required>
+                            <small>Minimo 8 caratteri</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Conferma Password *</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+
+                        <div class="clauses">
+                            <h3>Accettazione Clausole</h3>
+                            <div class="clause">
+                                <input type="checkbox" id="clausola_1" name="clausola_1" required>
+                                <label for="clausola_1">Accetto i termini e condizioni del servizio *</label>
+                            </div>
+                            <div class="clause">
+                                <input type="checkbox" id="clausola_2" name="clausola_2" required>
+                                <label for="clausola_2">Accetto l'informativa sulla privacy *</label>
+                            </div>
+                            <div class="clause">
+                                <input type="checkbox" id="clausola_3" name="clausola_3" required>
+                                <label for="clausola_3">Accetto di ricevere comunicazioni commerciali *</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn primary large">Registrati</button>
+                        <button type="button" class="btn secondary" onclick="showPage('welcomePage')">Annulla</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pagina di login -->
+            <div id="loginPage" class="page">
+                <div class="form-container">
+                    <h2>Accedi</h2>
+                    <form id="loginForm" class="form">
+                        <div class="form-group">
+                            <label for="loginCF">Codice Fiscale</label>
+                            <input type="text" id="loginCF" name="codice_fiscale" maxlength="16" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" name="password" required>
+                        </div>
+
+                        <button type="submit" class="btn primary large">Accedi</button>
+                        <button type="button" class="btn secondary" onclick="showPage('welcomePage')">Annulla</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Area utente -->
+            <div id="userArea" class="page">
+                <div class="user-container">
+                    <h2>Area Personale</h2>
+                    <div id="userInfo" class="user-info">
+                        <!-- Informazioni utente caricate dinamicamente -->
+                    </div>
+                    
+                    <div class="user-actions">
+                        <button id="editProfileBtn" class="btn primary">Modifica Profilo</button>
+                    </div>
+
+                    <!-- Form modifica profilo -->
+                    <div id="editProfileForm" class="form-container" style="display: none;">
+                        <h3>Modifica Profilo</h3>
+                        <form id="updateProfileForm" class="form">
+                            <div class="form-group">
+                                <label for="newEmail">Nuova Email</label>
+                                <input type="email" id="newEmail" name="email">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newTelefono">Nuovo Telefono</label>
+                                <input type="tel" id="newTelefono" name="telefono">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newPassword">Nuova Password</label>
+                                <input type="password" id="newPassword" name="password">
+                                <small>Lascia vuoto per non modificare</small>
+                            </div>
+
+                            <button type="submit" class="btn primary">Salva Modifiche</button>
+                            <button type="button" class="btn secondary" onclick="hideEditProfile()">Annulla</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagina admin -->
+            <div id="adminPage" class="page">
+                <div class="admin-container">
+                    <h2>Pannello Amministrativo</h2>
+                    
+                    <!-- Statistiche -->
+                    <div id="adminStats" class="admin-stats">
+                        <!-- Statistiche caricate dinamicamente -->
+                    </div>
+
+                    <!-- Barra di ricerca -->
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Cerca utenti per nome, cognome, codice fiscale, email o telefono...">
+                        <button id="searchBtn" class="btn primary">Cerca</button>
+                        <button id="clearSearchBtn" class="btn secondary">Pulisci</button>
+                        <button id="printBtn" class="btn admin">Stampa Elenco</button>
+                    </div>
+
+                    <!-- Tabella utenti -->
+                    <div class="table-container">
+                        <table id="usersTable" class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cognome</th>
+                                    <th>Codice Fiscale</th>
+                                    <th>Telefono</th>
+                                    <th>Email</th>
+                                    <th>Stato</th>
+                                    <th>Data Registrazione</th>
+                                    <th>Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Utenti caricati dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal per modifica utente -->
+                    <div id="editUserModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3>Modifica Utente</h3>
+                            <form id="editUserForm" class="form">
+                                <input type="hidden" id="editUserId">
+                                
+                                <div class="form-group">
+                                    <label for="editNome">Nome</label>
+                                    <input type="text" id="editNome" name="nome">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editCognome">Cognome</label>
+                                    <input type="text" id="editCognome" name="cognome">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editCodiceFiscale">Codice Fiscale</label>
+                                    <input type="text" id="editCodiceFiscale" name="codice_fiscale" maxlength="16">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editTelefono">Telefono</label>
+                                    <input type="tel" id="editTelefono" name="telefono">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editEmail">Email</label>
+                                    <input type="email" id="editEmail" name="email">
+                                </div>
+
+                                <button type="submit" class="btn primary">Salva Modifiche</button>
+                                <button type="button" class="btn secondary" onclick="closeEditModal()">Annulla</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Messaggi di notifica -->
+        <div id="notification" class="notification"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
