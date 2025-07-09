@@ -1,45 +1,48 @@
-from flask import Blueprint, request, redirect, url_for, flash, jsonify
-from flask_cors import cross_origin
+from flask import Blueprint, request, jsonify
 from src.models.utente import Utente
-from db import db
+from src import db
+from sqlalchemy.exc import IntegrityError
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if username == "admin" and password == "admin":
-            return redirect(url_for('dashboard'))
-        else:
-            flash("Credenziali non valide", "danger")
-    return "Pagina di login (da implementare o sostituire con render_template)"
-
-@auth_bp.route('/logout')
-def logout():
-    return redirect(url_for('auth.login'))
-
-@auth_bp.route('/register', methods=['POST'])
-@cross_origin()
+@auth_bp.route('/auth/register', methods=['POST'])
 def register():
     try:
         data = request.get_json()
 
-        nuovo_utente = Utente(
-            nome=data.get('nome'),
-            cognome=data.get('cognome'),
-            codice_fiscale=data.get('codice_fiscale'),
-            telefono=data.get('telefono'),
-            email=data.get('email'),
-            password=data.get('password')  # ⚠️ Da hashare in produzione!
-        )
+        nome = data.get('nome')
+        cognome = data.get('cognome')
+        codice_fiscale = data.get('codice_fiscale')
+        telefono = data.get('telefono')
+        email = data.get('email')
+        password = data.get('password')
 
+        # Controllo dati minimi
+        if not (nome and cognome and codice_fiscale and telefono and email and password):
+            return jsonify({"error": "Tutti i campi sono obbligatori"}), 400
+
+        # Verifica se esiste già
+        existing_user = Utente.query.filter_by(codice_fiscale=codice_fiscale).first()
+        if existing_user:
+            return jsonify({"error": "Codice fiscale già registrato"}), 409
+
+        # Crea nuovo utente
+        nuovo_utente = Utente(
+            nome=nome,
+            cognome=cognome,
+            codice_fiscale=codice_fiscale,
+            telefono=telefono,
+            email=email,
+            password=password
+        )
         db.session.add(nuovo_utente)
         db.session.commit()
 
-        return jsonify({"message": "Registrazione riuscita"}), 201
+        return jsonify({"message": "Registrazione completata con successo"}), 201
+
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Errore di integrità, dati duplicati"}), 409
 
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Errore interno: {str(e)}"}), 500
