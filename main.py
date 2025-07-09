@@ -48,7 +48,8 @@ def create_admin_user():
         print("Utente admin creato: admin@sistema.it / admin123")
 
 with app.app_context():
-    db.create_all()
+    os.makedirs('database', exist_ok=True)
+        db.create_all()
     create_admin_user()
 
 @app.route('/', defaults={'path': ''})
