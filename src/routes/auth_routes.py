@@ -19,3 +19,21 @@ def login():
 def logout():
     # Qui andrebbe la logica di logout
     return redirect(url_for('auth.login'))
+
+from flask import jsonify
+
+@auth_bp.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    nome = data.get('nome')
+    cognome = data.get('cognome')
+    codice_fiscale = data.get('codice_fiscale')
+    telefono = data.get('telefono')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Logica fittizia, da sostituire con salvataggio nel DB
+    print(f"Registrazione utente: {nome} {cognome}, CF: {codice_fiscale}")
+
+    return jsonify({"message": "Registrazione riuscita"}), 201
