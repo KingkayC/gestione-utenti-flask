@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
@@ -20,13 +20,13 @@ from src.routes.admin_routes import admin_bp
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 
-with app.app_context():
-    db.create_all()
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
-    from flask import jsonify
-
+# ✅ Route root
 @app.route("/")
 def home():
     return jsonify({"status": "ok", "message": "API Flask attiva 🚀"})
+
+# ✅ Inizializzazione DB e avvio server
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True, host='0.0.0.0')
