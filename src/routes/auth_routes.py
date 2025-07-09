@@ -1,4 +1,5 @@
 from flask import Blueprint, request, redirect, url_for, flash, jsonify
+from flask_cors import cross_origin
 from src.models.utente import Utente
 from db import db
 
@@ -20,18 +21,25 @@ def logout():
     return redirect(url_for('auth.login'))
 
 @auth_bp.route('/register', methods=['POST'])
+@cross_origin()
 def register():
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    nuovo_utente = Utente(
-        nome=data.get('nome'),
-        cognome=data.get('cognome'),
-        codice_fiscale=data.get('codice_fiscale'),
-        telefono=data.get('telefono'),
-        email=data.get('email'),
-        password=data.get('password')  # ⚠️ Da hashare in produzione!
-    )
-    db.session.add(nuovo_utente)
-    db.session.commit()
+        nuovo_utente = Utente(
+            nome=data.get('nome'),
+            cognome=data.get('cognome'),
+            codice_fiscale=data.get('codice_fiscale'),
+            telefono=data.get('telefono'),
+            email=data.get('email'),
+            password=data.get('password')  # ⚠️ Da hashare in produzione!
+        )
 
-    return jsonify({"message": "Registrazione riuscita"}), 201
+        db.session.add(nuovo_utente)
+        db.session.commit()
+
+        return jsonify({"message": "Registrazione riuscita"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
