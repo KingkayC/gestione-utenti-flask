@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrazione Utente</title>
+</head>
+<body>
+    <h2>Modulo di Registrazione</h2>
+    <form id="registerForm">
+        <input type="text" name="nome" placeholder="Nome" required><br>
+        <input type="text" name="cognome" placeholder="Cognome" required><br>
+        <input type="text" name="codice_fiscale" placeholder="Codice Fiscale" required><br>
+        <input type="text" name="telefono" placeholder="Telefono" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Registrati</button>
+    </form>
+
+    <p id="response"></p>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value });
+
+            const res = await fetch('/auth/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            const json = await res.json();
+            document.getElementById('response').innerText = JSON.stringify(json);
+        });
+    </script>
+</body>
+</html>
