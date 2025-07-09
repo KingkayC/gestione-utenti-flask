@@ -5,7 +5,9 @@ import os
 
 # Inizializzazione app Flask
 app = Flask(__name__)
-CORS(app)
+
+# ✅ CORS configurato per accettare tutte le origini (anche file://)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Configurazione database SQLite compatibile con Render
 basedir = os.path.abspath(os.path.dirname(__file__))
