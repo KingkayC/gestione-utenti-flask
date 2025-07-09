@@ -1,40 +1,27 @@
-import os
-import sys
-
-# DON'T CHANGE THIS !!!
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
-from flask import Flask, send_from_directory
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from src.models.user import db, User
-from src.routes.user import user_bp
-from src.routes.auth import auth_bp
-from src.routes.admin import admin_bp
+import os
 
-app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-app.config['SECRET_KEY'] = 'asd#f#G$svqasgf$$$WGT'
+app = Flask(__name__)
+CORS(app)
 
-# Abilita CORS per tutte le rotte
-CORS(app, supports_credentials=True)
-
-# Registra i blueprint
-app.register_blueprint(user_bp, url_prefix='/api')
-app.register_blueprint(auth_bp, url_prefix='/api/auth')
-app.register_blueprint(admin_bp, url_prefix='/api/admin')
-
-# Configurazione database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/database.db'
+# Percorso assoluto del file del database compatibile con Render
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, 'db.sqlite3')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
 
-# Crea tabelle se non esistono
+db = SQLAlchemy(app)
+
+from src.routes.auth_routes import auth_bp
+from src.routes.admin_routes import admin_bp
+
+app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(admin_bp, url_prefix='/admin')
+
 with app.app_context():
     db.create_all()
 
-# Route di default per servire l'applicazione frontend
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
